@@ -1,0 +1,20 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 14
+  pre_build:
+    commands:
+      - echo "Pre-build stage"
+      - echo "Installing AWS CLI if not present"
+      - if ! command -v aws &> /dev/null; then curl "https://awscli.amazonaws.com/AWSCLIV2.pkg" -o "AWSCLIV2.pkg"; sudo installer -pkg AWSCLIV2.pkg -target /; else echo "AWS CLI is already installed"; fi
+  build:
+    commands:
+      - echo "Build stage"
+      - echo "Deploying static website to S3"
+      - aws s3 sync . s3://csce412kzurutuzaxyz --delete
+  post_build:
+    commands:
+      - echo "Post-build stage"
+      - echo "Deployment complete"
